@@ -1,0 +1,262 @@
+name: Thrift
+scopeName: source.thrift
+repository:
+ comments:
+  single:
+   name: meta.comment.line.number-sign.thrift
+   pattern: (^[ \t]+)?(#.*)
+   caps: 1=punctuation.definition.comment.thrift 2=comment.line.number-sign.thrift
+  single:
+   name: meta.comment.line.double-slash.thrift
+   pattern: (^[ \t]+)?(//.*)
+   caps: 1=punctuation.whitespace.comment.leading.thrift 2=comment.line.double-slash.thrift
+  multi:
+   name: comment.block.documentation.thrift
+   begin: /\*\*
+   bcaps: 0=punctuation.definition.comment.begin.thrift
+   end: \*/
+   ecaps: 0=punctuation.definition.comment.end.thrift
+  multi:
+   name: comment.block.thrift
+   begin: /\*
+   bcaps: 0=punctuation.definition.comment.begin.thrift
+   end: \*/
+   ecaps: 0=punctuation.definition.comment.end.thrift
+ field:
+  single:
+   name: meta.field.thrift
+   pattern: \s*(\d+\s*:\s*)?(required|optional)?\s*(\S+)\s+(\S+);
+   caps: 1=entity.other.field-id.thrift 2=keyword.other.requiredness.thrift 3=storage.type.field.thrift 4=variable.other.field-name.thrift
+   # patterns:
+   #  multi:
+   #   begin: (?x)\
+   #     (?<ft>\
+   #      map\s*<\s*\g{ft}\s*,\s*\g{ft}\s*> |\
+   #      set\s*<\s*\g{ft}\s*> |\
+   #      list\s*<\s*\g{ft}\s*>\s*(cpp_type(?!\S))? |\
+   #      [a-zA-Z_][\w.]*\
+   #     )[ \t]*\
+   #     (?:([a-zA-Z_][\w.]*)[ \t]*)?
+   #   bcaps: 1=storage.type.field.thrift 2=keyword.other.cpp-type.thrift 3=variable.other.field-name.thrift
+   #   end: (?=[,;]|[)#]|//|/\*)|$
+   #   patterns:
+   #    multi:
+   #     begin: =
+   #     end: (?=[,;]|[)#]|//|/\*)|$
+   #     patterns:
+   #      single:
+   #       name: keyword.other.xsd_optional.thrift
+   #       pattern: (?<!\S)(xsd_optional)\b
+   #      single:
+   #       name: keyword.other.xsd_nillable.thrift
+   #       pattern: (?<!\S)(xsd_nillable)\b
+   #      include: #value
+ value:
+  single:
+   name: constant.numeric.float.thrift
+   pattern: [+-]?\d*\.\d+([eE][+-]?\d+)?
+  single:
+   name: constant.numeric.integer.thrift
+   pattern: [+-]?\d+
+  single:
+   name: constant.other.const-data.thrift
+   pattern: [a-zA-Z_][\w.]*
+  multi:
+   name: string.quoted.single.thrift
+   begin: '
+   bcaps: 0=punctuation.definition.string.begin.thrift
+   end: '
+   ecaps: 0=punctuation.definition.string.end.thrift
+  multi:
+   name: string.quoted.double.thrift
+   begin: "
+   bcaps: 0=punctuation.definition.string.begin.thrift
+   end: "
+   ecaps: 0=punctuation.definition.string.begin.thrift
+  multi:
+   name: meta.array.thrift
+   begin: \[
+   bcaps: 0=punctuation.definition.array.begin.thrift
+   end: \]
+   ecaps: 0=punctuation.definition.array.end.thrift
+   patterns:
+    single:
+     pattern: [,;]
+    include: #value
+  multi:
+   name: meta.map.thrift
+   begin: \{
+   bcaps: 0=punctuation.definition.map.begin.thrift
+   end: \}
+   ecaps: 0=punctuation.definition.map.end.thrift
+   patterns:
+    single:
+     pattern: [:,;]
+    include: #value
+  single:
+   name: invalid.illegal.thrift
+   pattern: \S
+patterns:
+ include: #comments
+ single:
+  name: meta.include.thrift
+  pattern: (include)(?!\S)(?:\s+((['"])(?>.*?(\3))))?
+  caps: 1=keyword.other.include.thrift 2=string.quoted.thrift 3=punctuation.definition.string.begin.thrift 4=punctuation.definition.string.end.thrift
+ single:
+  name: meta.cpp-include.thrift
+  pattern: (cpp_include)(?!\S)(?:\s+((['"])(?>.*?(\3))))?
+  caps: 1=keyword.other.cpp-include.thrift 2=string.quoted.thrift 3=punctuation.definition.string.begin.thrift 4=punctuation.definition.string.end.thrift
+ single:
+  name: meta.namespace.thrift
+  pattern: (namespace)(?!\S)(?:\s+([a-zA-Z_][\w.]*)(?:\s+([a-zA-Z_][\w.]*))?)?
+  caps: 1=keyword.other.namespace.thrift 2=support.other.namespace-language.thrift 3=variable.other.namespace.thrift
+ single:
+  name: meta.namespace.thrift
+  pattern: ((?:php|xsd)_namespace)(?!\S)(?:\s+([a-zA-Z_][\w.]*))?
+  caps: 1=keyword.other.namespace.thrift 2=variable.other.namespace.thrift
+ single:
+  pattern: ((?:cpp|ruby|csharp)_namespace|py_module|(?:java|perl)_package|smalltalk_(?:category|prefix)|cocoa_prefix)(?!\S)(?:\s+([a-zA-Z_][\w.]*))?
+  caps: 1=invalid.deprecated.namespace.thrift 2=variable.other.namespace.thrift
+ # multi:
+ #  name: meta.const.thrift
+ #  begin: (?<!\S)(const)(?!\S)(?:\s+(?<ft>map\s*<\s*\g{ft}\s*,\s*\g{ft}\s*>|set\s*<\s*\g{ft}\s*>|list\s*<\s*\g{ft}\s*>\s*cpp_type|[a-zA-Z_][\w.]*)(?:\s+([a-zA-Z_][\w.]*)(?:\s*=)?)?)?
+ #  bcaps: 1=keyword.other.const.thrift 2=storage.type.const.thrift 3=variable.other.const.thrift
+ #  end: $|^
+ #  patterns:
+ #   include: #comments
+ #   include: #value
+ # multi:
+ #  name: meta.typedef.thrift
+ #  begin: (?<!\S)(typedef)(?!\S)(?:\s+(?<ft>map\s*<\s*\g{ft}\s*,\s*\g{ft}\s*>|set\s*<\s*\g{ft}\s*>|list\s*<\s*\g{ft}\s*>\s*cpp_type|[a-zA-Z_][\w.]*)(?:\s+([a-zA-Z_][\w.]*))?)?
+ #  bcaps: 1=keyword.other.typedef.thrift 2=storage.type.typedef.thrift 3=variable.other.typedef.thrift
+ #  end: $|^
+ #  patterns:
+ #   include: #comments
+ multi:
+  name: meta.union.thrift
+  begin: (union)(?!\S)(?:\s+([a-zA-Z_][\w.]*)\s*(?![^\s{]))?
+  bcaps: 1=keyword.other.union.thrift 2=entity.name.type.union.thrift
+  end: (?<=\})|$
+  patterns:
+   single:
+    name: keyword.other.xsd-all.thrift
+    pattern: (?<!\S)xsd_all(?!\S)
+   multi:
+    begin: \{
+    bcaps: 0=punctuation.section.union.begin.thrift
+    end: \}
+    ecaps: 0=punctuation.section.union.end.thrift
+    patterns:
+     include: #comments
+     include: #field
+ multi:
+  name: meta.enum.thrift
+  begin: (enum)(?!\S)(?:\s+([a-zA-Z_][\w.]*)\s*(?![^\s{]))?
+  bcaps: 1=keyword.other.enum.thrift 2=entity.name.type.enum.thrift
+  end: \}
+  patterns:
+   single:
+    pattern: ([a-zA-Z_][\w.]*)(?:\s*=\s*(\d*))?(?:\s*[,;])?
+    caps: 1=variable.other.enum.thrift 2=constant.numeric.integer.thrift
+   include: #comments
+ multi:
+  name: meta.senum.thrift
+  begin: (senum)(?!\S)(?:\s+([a-zA-Z_][\w.]*)\s*(?![^\s{]))?
+  bcaps: 1=keyword.other.senum.thrift 2=entity.name.type.senum.thrift
+  end: (?<=\})|$
+  patterns:
+   multi:
+    begin: \{
+    bcaps: 0=punctuation.section.senum.begin.thrift
+    end: \}
+    ecaps: 0=punctuation.section.senum.end.thrift
+    patterns:
+     single:
+      pattern: (?<!\S)([a-zA-Z_][\w.]*)(?:\s*[,;])?
+      caps: 1=variable.other.senum.thrift
+     include: #comments
+     single:
+      name: invalid.illegal.thrift
+      pattern: \S
+ multi:
+  name: meta.struct.thrift
+  begin: (struct)(?!\S)(?:\s+([a-zA-Z_][\w.]*)\s*(?![^\s{]))?
+  bcaps: 1=keyword.other.struct.thrift 2=entity.name.type.struct.thrift
+  end: (?<=\})|$
+  patterns:
+   single:
+    name: keyword.other.xsd-all.thrift
+    pattern: (?<!\S)xsd_all(?!\S)
+   multi:
+    begin: \{
+    bcaps: 0=punctuation.section.struct.begin.thrift
+    end: \}
+    ecaps: 0=punctuation.section.struct.end.thrift
+    patterns:
+     include: #comments
+     include: #field
+ multi:
+  name: meta.exception.thrift
+  begin: (exception)(?!\S)(?:\s+([a-zA-Z_][\w.]*)\s*(?![^\s{]))?
+  bcaps: 1=keyword.other.exception.thrift 2=entity.name.type.exception.thrift
+  end: (?<=\})|$
+  patterns:
+   multi:
+    begin: \{
+    bcaps: 0=punctuation.section.exception.begin.thrift
+    end: \}
+    ecaps: 0=punctuation.section.exception.end.thrift
+    patterns:
+     include: #comments
+     include: #field
+ multi:
+  name: meta.service.thrift
+  begin: (service)(?!\S)(?:\s+([a-zA-z_][\w.]*)(?:\s+(extends)(?:\s+([a-zA-Z_][\w.]*))?)?\s*(?![^\s{]))?
+  bcaps: 1=keyword.other.service.thrift 2=entity.name.type.service.thrift 3=keyword.other.service.extends.thrift 4=entity.other.inherited-class.thrift
+  end: (?<=\})|$
+  patterns:
+   multi:
+    begin: \{
+    bcaps: 0=punctuation.section.service.begin.thrift
+    end: \}
+    ecaps: 0=punctuation.section.service.end.thrift
+    patterns:
+     include: #comments
+     # multi:
+     #  name: meta.service.function.thrift
+     #  begin: (?x)(?<!\S)\
+     #     (async(?!\S))?\s*\
+     #     (?<ft>\
+     #      map\s*<\s*\g{ft}\s*,\s*\g{ft}\s*> |\
+     #      set\s*<\s*\g{ft}\s*> |\
+     #      list\s*<\s*\g{ft}\s*>\s*(cpp_type(?!\S))? |\
+     #      (?!async\b)[a-zA-Z_][\w.]*\
+     #     )\s*\
+     #     (?:\
+     #      (?<!\S)([a-zA-Z_][\w.]*)\s*(?![^\s(])\
+     #     )?
+     #  bcaps: 1=keyword.other.async.thrift 2=storage.type.function.thrift 3=keyword.other.cpp_type.thrift 4=entity.name.function.thrift
+     #  end: $|^
+     #  patterns:
+     #   multi:
+     #    begin: \(
+     #    bcaps: 0=punctuation.definition.arguments.begin.thrift
+     #    end: \)
+     #    ecaps: 0=punctuation.definition.arguments.end.thrift
+     #    patterns:
+     #     include: #comments
+     #     include: #field
+     #   multi:
+     #    begin: (?<![^\s)])(throws)(?![^\s(])
+     #    bcaps: 1=keyword.other.service.function.throws.thrift
+     #    end: $
+     #    patterns:
+     #     multi:
+     #      begin: \(
+     #      bcaps: 0=punctuation.definition.arguments.begin.thrift
+     #      end: \)
+     #      ecaps: 0=punctuation.definition.arguments.end.thrift
+     #      patterns:
+     #       include: #comments
+     #       include: #field
+     #   include: #comments

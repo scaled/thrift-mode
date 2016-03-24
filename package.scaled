@@ -1,0 +1,8 @@
+   name: thrift-mode
+ source: git:https://github.com/scaled/thrift-mode.git
+version: 1.0
+descrip: Provides language support for Thrift.
+ weburl: https://github.com/scaled/thrift-mode
+license: New BSD
+ scopts: -deprecation -feature
+ depend: git:https://github.com/scaled/java-mode.git
