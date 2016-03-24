@@ -27,6 +27,7 @@ object ThriftConfig extends Config.Defs {
     effacer("entity.name.function", functionStyle),
     effacer("entity.other.field-id", preprocessorStyle),
 
+    effacer("storage.type.field", typeStyle),
     // storage.type.field: leaving white for now
     effacer("variable.parameter", variableStyle)
   )
