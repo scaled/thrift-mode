@@ -74,27 +74,12 @@ class ThriftMode (env :Env) extends GrammarCodeMode(env) {
   override protected def canAutoFill (p :Loc) :Boolean =
     super.canAutoFill(p) || (buffer.syntaxNear(p) == HD)
 
-  override val commenter :ThriftCommenter = new ThriftCommenter() {
-    // the thrift grammar marks all whitespace leading up to the open doc in comment style, so we
-    // have to hack this predicate a bit
-    override def inDoc (buffer :BufferV, p :Loc) :Boolean = {
-      super.inDoc(buffer, p) && {
-        val line = buffer.line(p)
-        (line.indexOf(openDocM, p.col) == -1)
-      }
-    }
-  }
-
-  //
-  // FNs
-
-  override def electricNewline () {
-    // shenanigans to determine whether we should auto-insert the doc prefix (* )
-    if (commenter.inDoc(buffer, view.point())) {
-      newline()
-      view.point() = commenter.insertDocPre(buffer, view.point())
-      reindentAtPoint()
-    } else super.electricNewline()
+  override val commenter = new Commenter() {
+    override def linePrefix  = "//"
+    override def blockPrefix = "*"
+    override def blockOpen   = "/*"
+    override def blockClose  = "*/"
+    override def docOpen     = "/**"
   }
 
   // TODO: more things!
