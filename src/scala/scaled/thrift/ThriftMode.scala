@@ -6,15 +6,16 @@ package scaled.thrift
 
 import scaled._
 import scaled.code.{CodeConfig, Commenter}
-import scaled.grammar.{Grammar, GrammarConfig, GrammarCodeMode}
+import scaled.grammar._
 import scaled.util.Paragrapher
 
-object ThriftConfig extends Config.Defs {
+@Plugin(tag="textmate-grammar")
+class ThriftGrammarPlugin extends GrammarPlugin {
   import CodeConfig._
-  import GrammarConfig._
 
-  // map TextMate grammar scopes to Scaled style definitions
-  val effacers = List(
+  override def grammars = Map("source.thrift" -> "Thrift.ndf")
+
+  override def effacers = List(
     effacer("comment.line", commentStyle),
     effacer("comment.block", docStyle),
     effacer("constant", constantStyle),
@@ -32,16 +33,13 @@ object ThriftConfig extends Config.Defs {
     effacer("variable.parameter", variableStyle)
   )
 
-  // map TextMate grammar scopes to Scaled syntax definitions
-  val syntaxers = List(
+  override def syntaxers = List(
     syntaxer("comment.line", Syntax.LineComment),
     syntaxer("comment.block", Syntax.DocComment),
     syntaxer("constant", Syntax.OtherLiteral),
     syntaxer("string.quoted.triple", Syntax.HereDocLiteral),
     syntaxer("string.quoted.double", Syntax.StringLiteral)
   )
-
-  val grammars = resource(Seq("Thrift.ndf"))(Grammar.parseNDFs)
 }
 
 @Major(name="thrift",
@@ -54,11 +52,7 @@ class ThriftMode (env :Env) extends GrammarCodeMode(env) {
   import scaled.util.Chars._
   import Syntax.{HereDocLiteral => HD}
 
-  override def configDefs = ThriftConfig :: super.configDefs
-
-  override def grammars = ThriftConfig.grammars.get
-  override def effacers = ThriftConfig.effacers
-  override def syntaxers = ThriftConfig.syntaxers
+  override def langScope = "source.thrift"
 
   override def mkParagrapher (syntax :Syntax) =
     if (syntax != HD) super.mkParagrapher(syntax)
