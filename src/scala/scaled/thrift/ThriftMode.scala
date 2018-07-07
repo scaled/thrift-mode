@@ -5,7 +5,7 @@
 package scaled.thrift
 
 import scaled._
-import scaled.code.{CodeConfig, Commenter}
+import scaled.code.{CodeConfig, Commenter, BlockIndenter}
 import scaled.grammar._
 import scaled.util.Paragrapher
 
@@ -63,7 +63,7 @@ class ThriftMode (env :Env) extends GrammarCodeMode(env) {
       }
     }
 
-  override protected def createIndenter = new ThriftIndenter(config)
+  override protected def createIndenter = new BlockIndenter(config, Seq())
 
   override protected def canAutoFill (p :Loc) :Boolean =
     super.canAutoFill(p) || (buffer.syntaxNear(p) == HD)
